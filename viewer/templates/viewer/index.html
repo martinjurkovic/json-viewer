@@ -1,48 +1,139 @@
-<div style="margin-left: 0;">
-<h2>{{ data.dataset_name }}</h2>
+<style>
+  table {
+    /* width: 50%; */
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  th {
+    background-color: #4caf50;
+    color: white;
+  }
 
-<h3>Single table:</h3>
+  /* for the score table */
+  .score-table td {
+    width: 20px;
+  }
 
-{% for table_name, table_content in data.metrics.single_table.items %}
-<div style="margin-left: 20px;">
-  <h3>{{ table_name }}</h3>
+  /* for the statistics table */
+  .stats-table td {
+    width: 80px;
+  }
 
-  {% for metric, details in table_content.items %}
-  <div style="margin-left: 20px;">
-    <h2>{{ metric }}</h2>
+  /* align numbers to the right */
+  td.number {
+    text-align: right;
+  }
+</style>
 
-    <table>
-      <tr>
-        {% for score in details.scores %}
-          <td>{{ score|floatformat:2 }},</td>
-        {% endfor %}
-      </tr>
-    </table>
+<div style="margin-left: 0">
+  <h1>{{ data.dataset_name }}</h1>
 
-    <table>
-      <tr>
-        <td><strong>Mean</strong></td>
-        <td>{{ details.mean|floatformat:2 }}</td>
-      </tr>
-      <tr>
-        <td><strong>Standard Deviation</strong></td>
-        <td>{{ details.std|floatformat:2 }}</td>
-      </tr>
-      <tr>
-        <td>Min</td>
-        <td>{{ details.min|floatformat:2 }}</td>
-      </tr>
-      <tr>
-        <td>Max</td>
-        <td>{{ details.max|floatformat:2 }}</td>
-      </tr>
-      <tr>
-        <td>Median</td>
-        <td>{{ details.median|floatformat:2 }}</td>
-      </tr>
-    </table>
+  <h2>Single table:</h2>
+
+  {% for table_name, table_content in data.metrics.single_table.items %}
+  <div style="margin-left: 20px">
+    <h2>{{ table_name }}</h2>
+
+    {% for metric, details in table_content.items %}
+    <div style="margin-left: 20px">
+      <h2>{{ metric }}</h2>
+
+      <button onclick="toggleTable('{{ table_name }}{{ forloop.counter }}');">
+        Show/hide
+      </button>
+      <div id="{{ table_name }}{{ forloop.counter }}" class="table-container">
+        <table class="score-table">
+          <tr>
+            {% for score in details.scores %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+        </table>
+
+        <table class="stats-table">
+          <tr>
+            <td><strong>Mean</strong></td>
+            <td class="number">{{ details.mean|floatformat:2 }}</td>
+          </tr>
+          <tr>
+            <td><strong>Standard Deviation</strong></td>
+            <td class="number">{{ details.std|floatformat:2 }}</td>
+          </tr>
+          <tr>
+            <td>Min</td>
+            <td class="number">{{ details.min|floatformat:2 }}</td>
+          </tr>
+          <tr>
+            <td>Max</td>
+            <td class="number">{{ details.max|floatformat:2 }}</td>
+          </tr>
+          <tr>
+            <td>Median</td>
+            <td class="number">{{ details.median|floatformat:2 }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+
+  <h2>Multi_table</h2>
+  {% for metric_name, details in data.metrics.multi_table.items %}
+  <div style="margin-left: 20px">
+    <h2>{{ metric_name }}</h2>
+
+    <button onclick="toggleTable('{{ metric_name }}{{ forloop.counter }}');">
+      Show/hide
+    </button>
+    <div id="{{ metric_name }}{{ forloop.counter }}" class="table-container">
+      <table>
+        <tr>
+          {% for score in details.scores %}
+          <td class="number">{{ score|floatformat:2 }},</td>
+          {% endfor %}
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td><strong>Mean</strong></td>
+          <td class="number">{{ details.mean|floatformat:2 }}</td>
+        </tr>
+        <tr>
+          <td><strong>Standard Deviation</strong></td>
+          <td class="number">{{ details.std|floatformat:2 }}</td>
+        </tr>
+        <tr>
+          <td>Min</td>
+          <td class="number">{{ details.min|floatformat:2 }}</td>
+        </tr>
+        <tr>
+          <td>Max</td>
+          <td class="number">{{ details.max|floatformat:2 }}</td>
+        </tr>
+        <tr>
+          <td>Median</td>
+          <td class="number">{{ details.median|floatformat:2 }}</td>
+        </tr>
+      </table>
+    </div>
   </div>
   {% endfor %}
 </div>
-{% endfor %}
-</div>
+
+<script>
+  function toggleTable(id) {
+    var x = document.getElementById(id);
+    if (x.style.display === "none") {
+      x.style.display = "block";
+    } else {
+      x.style.display = "none";
+    }
+  }
+</script>
