@@ -1,0 +1,48 @@
+<div style="margin-left: 0;">
+<h2>{{ data.dataset_name }}</h2>
+
+<h3>Single table:</h3>
+
+{% for table_name, table_content in data.metrics.single_table.items %}
+<div style="margin-left: 20px;">
+  <h3>{{ table_name }}</h3>
+
+  {% for metric, details in table_content.items %}
+  <div style="margin-left: 20px;">
+    <h2>{{ metric }}</h2>
+
+    <table>
+      <tr>
+        {% for score in details.scores %}
+          <td>{{ score|floatformat:2 }},</td>
+        {% endfor %}
+      </tr>
+    </table>
+
+    <table>
+      <tr>
+        <td><strong>Mean</strong></td>
+        <td>{{ details.mean|floatformat:2 }}</td>
+      </tr>
+      <tr>
+        <td><strong>Standard Deviation</strong></td>
+        <td>{{ details.std|floatformat:2 }}</td>
+      </tr>
+      <tr>
+        <td>Min</td>
+        <td>{{ details.min|floatformat:2 }}</td>
+      </tr>
+      <tr>
+        <td>Max</td>
+        <td>{{ details.max|floatformat:2 }}</td>
+      </tr>
+      <tr>
+        <td>Median</td>
+        <td>{{ details.median|floatformat:2 }}</td>
+      </tr>
+    </table>
+  </div>
+  {% endfor %}
+</div>
+{% endfor %}
+</div>
