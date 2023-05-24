@@ -16,18 +16,33 @@
 
   /* for the score table */
   .score-table td {
-    width: 20px;
+    width: 60px;
   }
 
   /* for the statistics table */
   .stats-table td {
-    width: 80px;
+    width: 100px;
   }
 
   /* align numbers to the right */
   td.number {
     text-align: right;
   }
+
+  .flex-container {
+    display: flex;
+    justify-content: space-flex-start;
+  }
+
+  .table-inline {
+        display: inline-block;
+        vertical-align: top;
+        margin-right: 20px;
+    }
+
+    .flex-container > table {
+        margin-right: 40px;  /* Add some space to the right of each table */
+    }
 </style>
 
 <div style="margin-left: 0">
@@ -47,36 +62,79 @@
         Show/hide
       </button>
       <div id="{{ table_name }}{{ forloop.counter }}" class="table-container">
-        <table class="score-table">
-          <tr>
-            {% for score in details.scores %}
-            <td class="number">{{ score|floatformat:2 }}</td>
+        <div class="flex-container">
+          <table class="score-table">
+            <tr>
+              <td><strong>Fold</strong></td>
+              <td><strong>Accuracy</strong></td>
+              <td><strong>Precision</strong></td>
+              <td><strong>Recall</strong></td>
+              <td><strong>Log loss</strong></td>
+            </tr>
+            {% for score_list in details.scores %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              {% for score in score_list %}
+              <td class="number">{{ score|floatformat:2 }}</td>
+              {% endfor %}
+            </tr>
             {% endfor %}
-          </tr>
-        </table>
+          </table>
 
-        <table class="stats-table">
-          <tr>
-            <td><strong>Mean</strong></td>
-            <td class="number">{{ details.mean|floatformat:2 }}</td>
-          </tr>
-          <tr>
-            <td><strong>Standard Deviation</strong></td>
-            <td class="number">{{ details.std|floatformat:2 }}</td>
-          </tr>
-          <tr>
-            <td>Min</td>
-            <td class="number">{{ details.min|floatformat:2 }}</td>
-          </tr>
-          <tr>
-            <td>Max</td>
-            <td class="number">{{ details.max|floatformat:2 }}</td>
-          </tr>
-          <tr>
-            <td>Median</td>
-            <td class="number">{{ details.median|floatformat:2 }}</td>
-          </tr>
-        </table>
+          <table class="stats-table">
+            <tr>
+              <td><strong>Statistic</strong></td>
+              <td><strong>Accuracy</strong></td>
+              <td><strong>Precision</strong></td>
+              <td><strong>Recall</strong></td>
+              <td><strong>Log loss</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Mean</strong></td>
+              {% for score in details.mean %}
+              <td class="number">{{ score|floatformat:2 }}</td>
+              {% endfor %}
+            </tr>
+            <tr>
+              <td><strong>Standard Deviation</strong></td>
+              {% for score in details.std %}
+              <td class="number">{{ score|floatformat:2 }}</td>
+              {% endfor %}
+            </tr>
+            <tr>
+              <td><strong>Standard Error</strong></td>
+              {% for score in details.se %}
+              <td class="number">{{ score|floatformat:2 }}</td>
+              {% endfor %}
+            </tr>
+            <tr>
+              <td><strong>Min</strong></td>
+              {% for score in details.min %}
+              <td class="number">{{ score|floatformat:2 }}</td>
+              {% endfor %}
+            </tr>
+            <tr>
+              <td><strong>Max</strong></td>
+              {% for score in details.max %}
+              <td class="number">{{ score|floatformat:2 }}</td>
+              {% endfor %}
+            </tr>
+            <tr>
+              <td><strong>Median</strong></td>
+              {% for score in details.median %}
+              <td class="number">{{ score|floatformat:2 }}</td>
+              {% endfor %}
+            </tr>
+            <tr>
+              <td><strong>95% confidence interval</strong></td>
+              {% for score1, score2 in details.95ci %}
+              <td class="number">
+                {{ score1|floatformat:3 }} - {{ score2|floatformat:3 }}
+              </td>
+              {% endfor %}
+            </tr>
+          </table>
+        </div>
       </div>
     </div>
     {% endfor %}
@@ -92,36 +150,79 @@
       Show/hide
     </button>
     <div id="{{ metric_name }}{{ forloop.counter }}" class="table-container">
-      <table>
-        <tr>
-          {% for score in details.scores %}
-          <td class="number">{{ score|floatformat:2 }},</td>
+      <div class="flex-container">
+        <table class="score-table">
+          <tr>
+            <td><strong>Fold</strong></td>
+            <td><strong>Accuracy</strong></td>
+            <td><strong>Precision</strong></td>
+            <td><strong>Recall</strong></td>
+            <td><strong>Log loss</strong></td>
+          </tr>
+          {% for score_list in details.scores %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            {% for score in score_list %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
           {% endfor %}
-        </tr>
-      </table>
+        </table>
 
-      <table>
-        <tr>
-          <td><strong>Mean</strong></td>
-          <td class="number">{{ details.mean|floatformat:2 }}</td>
-        </tr>
-        <tr>
-          <td><strong>Standard Deviation</strong></td>
-          <td class="number">{{ details.std|floatformat:2 }}</td>
-        </tr>
-        <tr>
-          <td>Min</td>
-          <td class="number">{{ details.min|floatformat:2 }}</td>
-        </tr>
-        <tr>
-          <td>Max</td>
-          <td class="number">{{ details.max|floatformat:2 }}</td>
-        </tr>
-        <tr>
-          <td>Median</td>
-          <td class="number">{{ details.median|floatformat:2 }}</td>
-        </tr>
-      </table>
+        <table class="stats-table">
+          <tr>
+            <td><strong>Statistic</strong></td>
+            <td><strong>Accuracy</strong></td>
+            <td><strong>Precision</strong></td>
+            <td><strong>Recall</strong></td>
+            <td><strong>Log loss</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Mean</strong></td>
+            {% for score in details.mean %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td><strong>Standard Deviation</strong></td>
+            {% for score in details.std %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td><strong>Standard Error</strong></td>
+            {% for score in details.se %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td><strong>Min</strong></td>
+            {% for score in details.min %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td><strong>Max</strong></td>
+            {% for score in details.max %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td><strong>Median</strong></td>
+            {% for score in details.median %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td><strong>95% confidence interval</strong></td>
+            {% for score1, score2 in details.95ci %}
+            <td class="number">
+              {{ score1|floatformat:3 }} - {{ score2|floatformat:3 }}
+            </td>
+            {% endfor %}
+          </tr>
+        </table>
+      </div>
     </div>
   </div>
   {% endfor %}
