@@ -69,23 +69,20 @@
       <div id="{{ table_name }}{{ forloop.counter }}" class="table-container">
         <div class="flex-container">
           <table class="score-table">
-            {% if 'statistical' in metric %}
             <tr>
-              <td><strong>Statistic</strong></td>
+            <td><strong>Fold</strong></td>
+            {% if 'statistical' in metric %}
               <td><strong>Kolmogorov-Smirnov</strong></td>
               <td><strong>Jensen Shannon</strong></td>
               <td><strong>Mean Max Discrepancy</strong></td>
               <td><strong>Chi^2</strong></td>
-            </tr>
             {% else %}
-            <tr>
-              <td><strong>Statistic</strong></td>
               <td><strong>Accuracy</strong></td>
               <td><strong>Precision</strong></td>
               <td><strong>Recall</strong></td>
               <td><strong>Log loss</strong></td>
+              {% endif %}
             </tr>
-            {% endif %}
             {% for score_list in details.scores %}
             <tr>
               <td>{{ forloop.counter }}</td>
@@ -97,23 +94,20 @@
           </table>
 
           <table class="stats-table">
-            {% if 'statistical' in metric %}
             <tr>
               <td><strong>Statistic</strong></td>
-              <td><strong>Kolmogorov-Smirnov</strong></td>
-              <td><strong>Jensen Shannon</strong></td>
-              <td><strong>Mean Max Discrepancy</strong></td>
-              <td><strong>Chi^2</strong></td>
-            </tr>
-            {% else %}
-            <tr>
-              <td><strong>Statistic</strong></td>
-              <td><strong>Accuracy</strong></td>
-              <td><strong>Precision</strong></td>
-              <td><strong>Recall</strong></td>
-              <td><strong>Log loss</strong></td>
-            </tr>
-            {% endif %}
+              {% if 'statistical' in metric %}
+                <td><strong>Kolmogorov-Smirnov</strong></td>
+                <td><strong>Jensen Shannon</strong></td>
+                <td><strong>Mean Max Discrepancy</strong></td>
+                <td><strong>Chi^2</strong></td>
+              {% else %}
+                <td><strong>Accuracy</strong></td>
+                <td><strong>Precision</strong></td>
+                <td><strong>Recall</strong></td>
+                <td><strong>Log loss</strong></td>
+                {% endif %}
+              </tr>
             <tr>
               <td><strong>Mean</strong></td>
               {% for score in details.mean %}
@@ -179,23 +173,20 @@
     <div id="{{ metric }}{{ forloop.counter }}" class="table-container">
       <div class="flex-container">
         <table class="score-table">
-          {% if 'statistical' in metric %}
-            <tr>
-              <td><strong>Statistic</strong></td>
+          <tr>
+            <td><strong>Fold</strong></td>
+            {% if 'statistical' in metric %}
               <td><strong>Kolmogorov-Smirnov</strong></td>
               <td><strong>Jensen Shannon</strong></td>
               <td><strong>Mean Max Discrepancy</strong></td>
               <td><strong>Chi^2</strong></td>
-            </tr>
             {% else %}
-            <tr>
-              <td><strong>Statistic</strong></td>
               <td><strong>Accuracy</strong></td>
               <td><strong>Precision</strong></td>
               <td><strong>Recall</strong></td>
               <td><strong>Log loss</strong></td>
+              {% endif %}
             </tr>
-            {% endif %}
           {% for score_list in details.scores %}
           <tr>
             <td>{{ forloop.counter }}</td>
@@ -207,23 +198,20 @@
         </table>
 
         <table class="stats-table">
-          {% if 'statistical' in metric %}
-            <tr>
-              <td><strong>Statistic</strong></td>
+          <tr>
+            <td><strong>Statistic</strong></td>
+            {% if 'statistical' in metric %}
               <td><strong>Kolmogorov-Smirnov</strong></td>
               <td><strong>Jensen Shannon</strong></td>
               <td><strong>Mean Max Discrepancy</strong></td>
               <td><strong>Chi^2</strong></td>
-            </tr>
             {% else %}
-            <tr>
-              <td><strong>Statistic</strong></td>
               <td><strong>Accuracy</strong></td>
               <td><strong>Precision</strong></td>
               <td><strong>Recall</strong></td>
               <td><strong>Log loss</strong></td>
+              {% endif %}
             </tr>
-            {% endif %}
           <tr>
             <td><strong>Mean</strong></td>
             {% for score in details.mean %}
