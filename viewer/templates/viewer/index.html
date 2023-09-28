@@ -35,14 +35,14 @@
   }
 
   .table-inline {
-        display: inline-block;
-        vertical-align: top;
-        margin-right: 20px;
-    }
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 20px;
+  }
 
-    .flex-container > table {
-        margin-right: 40px;  /* Add some space to the right of each table */
-    }
+  .flex-container > table {
+    margin-right: 40px; /* Add some space to the right of each table */
+  }
 </style>
 {% load custom_filters %}
 
@@ -50,8 +50,51 @@
   <h1>METHOD: {{ data.method_name }}</h1>
   <h1>DATASET NAME: {{ data.dataset_name }}</h1>
 
-  <h2>Single table:</h2>
+  <h2>Single column, concatenated tables metrics</h2>
+    {% for table_name, table_content in data.metrics.single_column.items %}
+    <div style="margin-left: 20px">
+        <h2>Table name: {{ table_name }}</h2>
+        
+        <div style="margin-left: 20px">
+            <div id="{{ table_name }}{{ forloop.counter }}" class="table-container">
+                <div class="flex-container">
+            {% for metric, details in table_content.items %}
+                {% with metric|split_by_underscore as split_metric_name %}
+                    <h2>{{ split_metric_name }}</h2>
+                {% endwith %}
 
+                <!-- <button onclick="toggleTable('{{ table_name }}{{ forloop.counter }}');">
+                    Show/hide
+                </button> -->
+
+                
+                        <table class="score-table">
+                            <tr>
+                            <td><strong>Column Name</strong></td>
+                            <td><strong>p-value</strong></td>
+                            <td><strong>statistic</strong></td>
+                            </tr>
+
+                            {% for column_name, column_dict in details.items%}
+                                <tr>
+                                <td>{{ column_name }}</td>
+                                {% for stat_name, stat_value in column_dict.items %}
+                                    <td class="number" {% if stat_name == 'pvalue' and stat_value <= 0.05 %} style="color: red;"{% endif %}>
+                                        {{ stat_value|floatformat:4 }}
+                                    </td>
+                                {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </table>
+                
+            {% endfor %}
+        </div>
+    </div>
+        </div>
+    </div>
+    {% endfor %}
+
+  <h2>Single table:</h2>
   {% for table_name, table_content in data.metrics.single_table.items %}
   <div style="margin-left: 20px">
     <h2>Table name: {{ table_name }}</h2>
@@ -59,10 +102,9 @@
     {% for metric, details in table_content.items %}
     <div style="margin-left: 20px">
       {% with metric|split_by_underscore as split_metric_name %}
-          <h2>{{ split_metric_name }}</h2>
+      <h2>{{ split_metric_name }}</h2>
       {% endwith %}
-      
-        
+
       <button onclick="toggleTable('{{ table_name }}{{ forloop.counter }}');">
         Show/hide
       </button>
@@ -70,13 +112,13 @@
         <div class="flex-container">
           <table class="score-table">
             <tr>
-            <td><strong>Fold</strong></td>
-            {% if 'statistical' in metric %}
+              <td><strong>Fold</strong></td>
+              {% if 'statistical' in metric %}
               <td><strong>Kolmogorov-Smirnov</strong></td>
               <td><strong>Jensen Shannon</strong></td>
               <td><strong>Mean Max Discrepancy</strong></td>
               <td><strong>Chi^2</strong></td>
-            {% else %}
+              {% else %}
               <td><strong>Accuracy</strong></td>
               <td><strong>Precision</strong></td>
               <td><strong>Recall</strong></td>
@@ -97,17 +139,17 @@
             <tr>
               <td><strong>Statistic</strong></td>
               {% if 'statistical' in metric %}
-                <td><strong>Kolmogorov-Smirnov</strong></td>
-                <td><strong>Jensen Shannon</strong></td>
-                <td><strong>Mean Max Discrepancy</strong></td>
-                <td><strong>Chi^2</strong></td>
+              <td><strong>Kolmogorov-Smirnov</strong></td>
+              <td><strong>Jensen Shannon</strong></td>
+              <td><strong>Mean Max Discrepancy</strong></td>
+              <td><strong>Chi^2</strong></td>
               {% else %}
-                <td><strong>Accuracy</strong></td>
-                <td><strong>Precision</strong></td>
-                <td><strong>Recall</strong></td>
-                <td><strong>Log loss</strong></td>
-                {% endif %}
-              </tr>
+              <td><strong>Accuracy</strong></td>
+              <td><strong>Precision</strong></td>
+              <td><strong>Recall</strong></td>
+              <td><strong>Log loss</strong></td>
+              {% endif %}
+            </tr>
             <tr>
               <td><strong>Mean</strong></td>
               {% for score in details.mean %}
@@ -164,8 +206,8 @@
   {% for metric, details in data.metrics.multi_table.items %}
   <div style="margin-left: 20px">
     {% with metric|split_by_underscore as split_metric_name %}
-          <h2>{{ split_metric_name }}</h2>
-      {% endwith %}
+    <h2>{{ split_metric_name }}</h2>
+    {% endwith %}
 
     <button onclick="toggleTable('{{ metric }}{{ forloop.counter }}');">
       Show/hide
@@ -176,17 +218,17 @@
           <tr>
             <td><strong>Fold</strong></td>
             {% if 'statistical' in metric %}
-              <td><strong>Kolmogorov-Smirnov</strong></td>
-              <td><strong>Jensen Shannon</strong></td>
-              <td><strong>Mean Max Discrepancy</strong></td>
-              <td><strong>Chi^2</strong></td>
+            <td><strong>Kolmogorov-Smirnov</strong></td>
+            <td><strong>Jensen Shannon</strong></td>
+            <td><strong>Mean Max Discrepancy</strong></td>
+            <td><strong>Chi^2</strong></td>
             {% else %}
-              <td><strong>Accuracy</strong></td>
-              <td><strong>Precision</strong></td>
-              <td><strong>Recall</strong></td>
-              <td><strong>Log loss</strong></td>
-              {% endif %}
-            </tr>
+            <td><strong>Accuracy</strong></td>
+            <td><strong>Precision</strong></td>
+            <td><strong>Recall</strong></td>
+            <td><strong>Log loss</strong></td>
+            {% endif %}
+          </tr>
           {% for score_list in details.scores %}
           <tr>
             <td>{{ forloop.counter }}</td>
@@ -201,17 +243,17 @@
           <tr>
             <td><strong>Statistic</strong></td>
             {% if 'statistical' in metric %}
-              <td><strong>Kolmogorov-Smirnov</strong></td>
-              <td><strong>Jensen Shannon</strong></td>
-              <td><strong>Mean Max Discrepancy</strong></td>
-              <td><strong>Chi^2</strong></td>
+            <td><strong>Kolmogorov-Smirnov</strong></td>
+            <td><strong>Jensen Shannon</strong></td>
+            <td><strong>Mean Max Discrepancy</strong></td>
+            <td><strong>Chi^2</strong></td>
             {% else %}
-              <td><strong>Accuracy</strong></td>
-              <td><strong>Precision</strong></td>
-              <td><strong>Recall</strong></td>
-              <td><strong>Log loss</strong></td>
-              {% endif %}
-            </tr>
+            <td><strong>Accuracy</strong></td>
+            <td><strong>Precision</strong></td>
+            <td><strong>Recall</strong></td>
+            <td><strong>Log loss</strong></td>
+            {% endif %}
+          </tr>
           <tr>
             <td><strong>Mean</strong></td>
             {% for score in details.mean %}
