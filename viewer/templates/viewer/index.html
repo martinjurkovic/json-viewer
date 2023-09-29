@@ -50,28 +50,21 @@
   <h1>METHOD: {{ data.method_name }}</h1>
   <h1>DATASET NAME: {{ data.dataset_name }}</h1>
 
-  <h2>Single column, concatenated tables metrics</h2>
+  <h2>Statistical, concatenated tables metrics</h2>
     {% for table_name, table_content in data.metrics.statistical.items %}
     <div style="margin-left: 20px">
         <h2>Table name: {{ table_name }}</h2>
 
+        <div style="margin-left: 20px">
         <button onclick="toggleTable('{{ table_name }}{{ forloop.counter }}');">
             Show/hide
         </button>
-        
-        <div style="margin-left: 20px">
-            
             <div id="{{ table_name }}{{ forloop.counter }}" class="table-container">
-                
                 <div class="flex-container">
             {% for metric, details in table_content.items %}
                 {% with metric|split_by_underscore as split_metric_name %}
                     <h2>{{ split_metric_name }}</h2>
                 {% endwith %}
-
-                
-
-                
                         <table class="score-table">
                             <tr>
                             <td><strong>Column Name</strong></td>
@@ -109,10 +102,10 @@
       <h2>{{ split_metric_name }}</h2>
       {% endwith %}
 
-      <button onclick="toggleTable('{{ table_name }}{{ forloop.counter }}');">
+      <button onclick="toggleTable('{{ metric_name }}{{ forloop.counter }}');">
         Show/hide
       </button>
-      <div id="{{ table_name }}{{ forloop.counter }}" class="table-container">
+      <div id="{{ metric_name }}{{ forloop.counter }}" class="table-container">
         <div class="flex-container">
           <table class="score-table">
             <tr>
@@ -307,9 +300,8 @@
     </div>
   </div>
   {% endfor %}
-</div>
 
-<h2>Single column:</h2>
+  <h2>Single column:</h2>
 {% for table_name, table_content in data.metrics.single_column.items %}
 <div style="margin-left: 20px">
   <h2>Table name: {{ table_name }}</h2>
@@ -324,10 +316,10 @@
   {% for column_name, details in column_details.items%}
   <h3>{{ column_name }}</h3>
   
-  <button onclick="toggleTable('{{ table_name }}{{ forloop.counter }}');">
+  <button onclick="toggleTable('{{ column_name }}{{ forloop.counter }}');">
       Show/hide
   </button>
-    <div id="{{ table_name }}{{ forloop.counter }}" class="table-container">
+    <div id="{{ column_name }}{{ forloop.counter }}" class="table-container">
       <div class="flex-container">
         <table class="score-table">
           <tr>
@@ -402,6 +394,9 @@
   {% endfor %}
 </div>
 {% endfor %}
+</div>
+
+
 
 <script>
   function toggleTable(id) {
