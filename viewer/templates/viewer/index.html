@@ -51,21 +51,25 @@
   <h1>DATASET NAME: {{ data.dataset_name }}</h1>
 
   <h2>Single column, concatenated tables metrics</h2>
-    {% for table_name, table_content in data.metrics.single_column.items %}
+    {% for table_name, table_content in data.metrics.statistical.items %}
     <div style="margin-left: 20px">
         <h2>Table name: {{ table_name }}</h2>
+
+        <button onclick="toggleTable('{{ table_name }}{{ forloop.counter }}');">
+            Show/hide
+        </button>
         
         <div style="margin-left: 20px">
+            
             <div id="{{ table_name }}{{ forloop.counter }}" class="table-container">
+                
                 <div class="flex-container">
             {% for metric, details in table_content.items %}
                 {% with metric|split_by_underscore as split_metric_name %}
                     <h2>{{ split_metric_name }}</h2>
                 {% endwith %}
 
-                <!-- <button onclick="toggleTable('{{ table_name }}{{ forloop.counter }}');">
-                    Show/hide
-                </button> -->
+                
 
                 
                         <table class="score-table">
@@ -304,6 +308,100 @@
   </div>
   {% endfor %}
 </div>
+
+<h2>Single column:</h2>
+{% for table_name, table_content in data.metrics.single_column.items %}
+<div style="margin-left: 20px">
+  <h2>Table name: {{ table_name }}</h2>
+
+  {% for metric, column_details in table_content.items %}
+  
+  {% with metric|split_by_underscore as split_metric_name %}
+  <h2>{{ split_metric_name }}</h2>
+  {% endwith %}
+  
+  <div style="margin-left: 20px">
+  {% for column_name, details in column_details.items%}
+  <h3>{{ column_name }}</h3>
+  
+  <button onclick="toggleTable('{{ table_name }}{{ forloop.counter }}');">
+      Show/hide
+  </button>
+    <div id="{{ table_name }}{{ forloop.counter }}" class="table-container">
+      <div class="flex-container">
+        <table class="score-table">
+          <tr>
+            <td><strong>Fold</strong></td>
+            <td><strong>Metric value</strong></td>
+          </tr>
+          {% for score_list in details.scores %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            {% for score in score_list %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+
+        <table class="stats-table">
+          <tr>
+            <td><strong>Statistic</strong></td>
+            <td><strong>Metric Value</strong></td>
+            
+          </tr>
+          <tr>
+            <td><strong>Mean</strong></td>
+            {% for score in details.mean %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td><strong>Standard Deviation</strong></td>
+            {% for score in details.std %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td><strong>Standard Error</strong></td>
+            {% for score in details.se %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td><strong>Min</strong></td>
+            {% for score in details.min %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td><strong>Max</strong></td>
+            {% for score in details.max %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td><strong>Median</strong></td>
+            {% for score in details.median %}
+            <td class="number">{{ score|floatformat:2 }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td><strong>95% confidence interval</strong></td>
+            {% for score1, score2 in details.95ci %}
+            <td class="number">
+              {{ score1|floatformat:3 }} - {{ score2|floatformat:3 }}
+            </td>
+            {% endfor %}
+          </tr>
+        </table>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% endfor %}
 
 <script>
   function toggleTable(id) {
