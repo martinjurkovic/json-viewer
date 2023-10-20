@@ -149,43 +149,43 @@
             </tr>
             <tr>
               <td><strong>Mean</strong></td>
-              {% for score in details.mean %}
+              {% for score in details.aggregation_scores.mean %}
               <td class="number">{{ score|floatformat:2 }}</td>
               {% endfor %}
             </tr>
             <tr>
               <td><strong>Standard Deviation</strong></td>
-              {% for score in details.std %}
+              {% for score in details.aggregation_scores.std %}
               <td class="number">{{ score|floatformat:2 }}</td>
               {% endfor %}
             </tr>
             <tr>
               <td><strong>Standard Error</strong></td>
-              {% for score in details.se %}
+              {% for score in details.aggregation_scores.se %}
               <td class="number">{{ score|floatformat:2 }}</td>
               {% endfor %}
             </tr>
             <tr>
               <td><strong>Min</strong></td>
-              {% for score in details.min %}
+              {% for score in details.aggregation_scores.min %}
               <td class="number">{{ score|floatformat:2 }}</td>
               {% endfor %}
             </tr>
             <tr>
               <td><strong>Max</strong></td>
-              {% for score in details.max %}
+              {% for score in details.aggregation_scores.max %}
               <td class="number">{{ score|floatformat:2 }}</td>
               {% endfor %}
             </tr>
             <tr>
               <td><strong>Median</strong></td>
-              {% for score in details.median %}
+              {% for score in details.aggregation_scores.median %}
               <td class="number">{{ score|floatformat:2 }}</td>
               {% endfor %}
             </tr>
             <tr>
               <td><strong>95% confidence interval</strong></td>
-              {% for score1, score2 in details.95ci %}
+              {% for score1, score2 in details.aggregation_scores.95ci %}
               <td class="number">
                 {{ score1|floatformat:3 }} - {{ score2|floatformat:3 }}
               </td>
@@ -253,43 +253,43 @@
           </tr>
           <tr>
             <td><strong>Mean</strong></td>
-            {% for score in details.mean %}
+            {% for score in details.aggregation_scores.mean %}
             <td class="number">{{ score|floatformat:2 }}</td>
             {% endfor %}
           </tr>
           <tr>
             <td><strong>Standard Deviation</strong></td>
-            {% for score in details.std %}
+            {% for score in details.aggregation_scores.std %}
             <td class="number">{{ score|floatformat:2 }}</td>
             {% endfor %}
           </tr>
           <tr>
             <td><strong>Standard Error</strong></td>
-            {% for score in details.se %}
+            {% for score in details.aggregation_scores.se %}
             <td class="number">{{ score|floatformat:2 }}</td>
             {% endfor %}
           </tr>
           <tr>
             <td><strong>Min</strong></td>
-            {% for score in details.min %}
+            {% for score in details.aggregation_scores.min %}
             <td class="number">{{ score|floatformat:2 }}</td>
             {% endfor %}
           </tr>
           <tr>
             <td><strong>Max</strong></td>
-            {% for score in details.max %}
+            {% for score in details.aggregation_scores.max %}
             <td class="number">{{ score|floatformat:2 }}</td>
             {% endfor %}
           </tr>
           <tr>
             <td><strong>Median</strong></td>
-            {% for score in details.median %}
+            {% for score in details.aggregation_scores.median %}
             <td class="number">{{ score|floatformat:2 }}</td>
             {% endfor %}
           </tr>
           <tr>
             <td><strong>95% confidence interval</strong></td>
-            {% for score1, score2 in details.95ci %}
+            {% for score1, score2 in details.aggregation_scores.95ci %}
             <td class="number">
               {{ score1|floatformat:3 }} - {{ score2|floatformat:3 }}
             </td>
@@ -344,43 +344,43 @@
           </tr>
           <tr>
             <td><strong>Mean</strong></td>
-            {% for score in details.mean %}
+            {% for score in details.aggregation_scores.mean %}
             <td class="number">{{ score|floatformat:2 }}</td>
             {% endfor %}
           </tr>
           <tr>
             <td><strong>Standard Deviation</strong></td>
-            {% for score in details.std %}
+            {% for score in details.aggregation_scores.std %}
             <td class="number">{{ score|floatformat:2 }}</td>
             {% endfor %}
           </tr>
           <tr>
             <td><strong>Standard Error</strong></td>
-            {% for score in details.se %}
+            {% for score in details.aggregation_scores.se %}
             <td class="number">{{ score|floatformat:2 }}</td>
             {% endfor %}
           </tr>
           <tr>
             <td><strong>Min</strong></td>
-            {% for score in details.min %}
+            {% for score in details.aggregation_scores.min %}
             <td class="number">{{ score|floatformat:2 }}</td>
             {% endfor %}
           </tr>
           <tr>
             <td><strong>Max</strong></td>
-            {% for score in details.max %}
+            {% for score in details.aggregation_scores.max %}
             <td class="number">{{ score|floatformat:2 }}</td>
             {% endfor %}
           </tr>
           <tr>
             <td><strong>Median</strong></td>
-            {% for score in details.median %}
+            {% for score in details.aggregation_scores.median %}
             <td class="number">{{ score|floatformat:2 }}</td>
             {% endfor %}
           </tr>
           <tr>
             <td><strong>95% confidence interval</strong></td>
-            {% for score1, score2 in details.95ci %}
+            {% for score1, score2 in details.aggregation_scores.95ci %}
             <td class="number">
               {{ score1|floatformat:3 }} - {{ score2|floatformat:3 }}
             </td>
