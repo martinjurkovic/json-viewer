@@ -16,7 +16,7 @@
 
   /* for the score table */
   .score-table td {
-    width: 60px;
+    width: 90px;
   }
 
   /* for the statistics table */
@@ -325,13 +325,25 @@
           <tr>
             <td><strong>Fold</strong></td>
             <td><strong>Metric value</strong></td>
+            <td><strong>Bootstrap 95% CI</strong></td>
           </tr>
-          {% for score_list in details.scores %}
+          {% for score_list, 95ci_list in details.combined_scores %}
           <tr>
             <td>{{ forloop.counter }}</td>
             {% for score in score_list %}
-            <td class="number">{{ score|floatformat:2 }}</td>
+            <td class="number" {% if score|is_in_range:95ci_list %} style="color: green;"{% else %}style="color: red;"{% endif %}>
+              {{ score|floatformat:4 }}</td>
             {% endfor %}
+            
+              <td class="number">
+                {% for score1 in 95ci_list %}
+                 {{ score1|floatformat:3 }}
+                 {% if not forloop.last %}
+                      -
+                  {% endif %}
+                {% endfor %}
+              </td>
+            
           </tr>
           {% endfor %}
         </table>
