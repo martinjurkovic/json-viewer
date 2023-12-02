@@ -56,10 +56,10 @@
         <h2>Table name: {{ table_name }}</h2>
 
         <div style="margin-left: 20px">
-        <button onclick="toggleTable('{{ table_name }}{{ forloop.counter }}');">
+        <button onclick="toggleTable('statistical-{{ table_name }}-{{ forloop.counter }}');">
             Show/hide
         </button>
-            <div id="{{ table_name }}{{ forloop.counter }}" class="table-container">
+            <div id="statistical-{{ table_name }}-{{ forloop.counter }}" class="table-container">
                 <div class="flex-container">
             {% for metric, details in table_content.items %}
                 {% with metric|split_by_underscore as split_metric_name %}
@@ -102,10 +102,10 @@
       <h2>{{ split_metric_name }}</h2>
       {% endwith %}
 
-      <button onclick="toggleTable('{{ metric_name }}{{ forloop.counter }}');">
+      <button onclick="toggleTable('singletable-{{ table_name }}-{{ metric }}-{{ forloop.counter }}');">
         Show/hide
       </button>
-      <div id="{{ metric_name }}{{ forloop.counter }}" class="table-container">
+      <div id="singletable-{{ table_name }}-{{ metric }}-{{ forloop.counter }}" class="table-container">
         <div class="flex-container">
           <table class="score-table">
             <tr>
@@ -115,21 +115,31 @@
               <td><strong>Jensen Shannon</strong></td>
               <td><strong>Mean Max Discrepancy</strong></td>
               <td><strong>Chi^2</strong></td>
-              {% else %}
-              <td><strong>Accuracy</strong></td>
-              <td><strong>Precision</strong></td>
-              <td><strong>Recall</strong></td>
-              <td><strong>Log loss</strong></td>
+              {% elif 'detection' in metric %}
+                {% for i in details.accuracy.fold_statistics.mean %}
+                <td><strong>{{ forloop.counter }}</strong></td>
+                {% endfor %}
+               {% else %}
+               {% for i in details.fold_statistics.mean %}
+               <td><strong>{{ forloop.counter }}</strong></td>
+             {% endfor %}
               {% endif %}
             </tr>
-            {% for score_list in details.scores %}
-            <tr>
-              <td>{{ forloop.counter }}</td>
-              {% for score in score_list %}
+            {% if 'detection' in metric %}
+              {% for metric_type_name, metric_type_items in details.items %}
+              <tr>
+                <td><strong>{{ metric_type_name }}</strong></td>
+                {% for score in metric_type_items.fold_statistics.mean %}
+                <td class="number">{{ score|floatformat:2 }}</td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            {% else %}
+              <td><strong>Values</strong></td>
+              {% for score in details.fold_statistics.mean %}
               <td class="number">{{ score|floatformat:2 }}</td>
               {% endfor %}
-            </tr>
-            {% endfor %}
+            {% endif %}
           </table>
 
           <table class="stats-table">
@@ -141,56 +151,44 @@
               <td><strong>Mean Max Discrepancy</strong></td>
               <td><strong>Chi^2</strong></td>
               {% else %}
-              <td><strong>Accuracy</strong></td>
-              <td><strong>Precision</strong></td>
-              <td><strong>Recall</strong></td>
-              <td><strong>Log loss</strong></td>
+              <td><strong>Mean</strong></td>
+              <td><strong>Std. Dev.</strong></td>
+              <td><strong>Std. Err.</strong></td>
+              <td><strong>Min</strong></td>
+              <td><strong>Max</strong></td>
+              <td><strong>Median</strong></td>
+              <td><strong>95% CI</strong></td>
               {% endif %}
             </tr>
-            <tr>
-              <td><strong>Mean</strong></td>
-              {% for score in details.aggregation_scores.mean %}
-              <td class="number">{{ score|floatformat:2 }}</td>
+            {% if 'detection' in metric %}
+              {% for metric_type_name, metric_type_items in details.items %}
+              <tr>
+                <td><strong>{{ metric_type_name }}</strong></td>
+                <td class="number">{{ metric_type_items.statistics.mean|floatformat:2 }}</td>
+                <td class="number">{{ metric_type_items.statistics.std|floatformat:2 }}</td>
+                <td class="number">{{ metric_type_items.statistics.se_mean|floatformat:2 }}</td>
+                <td class="number">{{ metric_type_items.statistics.min|floatformat:2 }}</td>
+                <td class="number">{{ metric_type_items.statistics.max|floatformat:2 }}</td>
+                <td class="number">{{ metric_type_items.statistics.median|floatformat:2 }}</td>
+                <td class="number">
+                  {{ metric_type_items.statistics.95ci.0|floatformat:3 }} - {{ metric_type_items.statistics.95ci.1|floatformat:3 }}
+              </tr>
+
               {% endfor %}
-            </tr>
+            {% else %}
             <tr>
-              <td><strong>Standard Deviation</strong></td>
-              {% for score in details.aggregation_scores.std %}
-              <td class="number">{{ score|floatformat:2 }}</td>
-              {% endfor %}
-            </tr>
-            <tr>
-              <td><strong>Standard Error</strong></td>
-              {% for score in details.aggregation_scores.se %}
-              <td class="number">{{ score|floatformat:2 }}</td>
-              {% endfor %}
-            </tr>
-            <tr>
-              <td><strong>Min</strong></td>
-              {% for score in details.aggregation_scores.min %}
-              <td class="number">{{ score|floatformat:2 }}</td>
-              {% endfor %}
-            </tr>
-            <tr>
-              <td><strong>Max</strong></td>
-              {% for score in details.aggregation_scores.max %}
-              <td class="number">{{ score|floatformat:2 }}</td>
-              {% endfor %}
-            </tr>
-            <tr>
-              <td><strong>Median</strong></td>
-              {% for score in details.aggregation_scores.median %}
-              <td class="number">{{ score|floatformat:2 }}</td>
-              {% endfor %}
-            </tr>
-            <tr>
-              <td><strong>95% confidence interval</strong></td>
-              {% for score1, score2 in details.aggregation_scores.95ci %}
+              <td><strong>Values</strong></td>
+              <td class="number">{{ details.statistics.mean|floatformat:2 }}</td>
+              <td class="number">{{ details.statistics.std|floatformat:2 }}</td>
+              <td class="number">{{ details.statistics.se|floatformat:2 }}</td>
+              <td class="number">{{ details.statistics.min|floatformat:2 }}</td>
+              <td class="number">{{ details.statistics.max|floatformat:2 }}</td>
+              <td class="number">{{ details.statistics.median|floatformat:2 }}</td>
               <td class="number">
-                {{ score1|floatformat:3 }} - {{ score2|floatformat:3 }}
-              </td>
-              {% endfor %}
-            </tr>
+                {{ details.statistics.95ci.0|floatformat:3 }} - {{ details.statistics.95ci.1|floatformat:3 }}
+             
+            {% endif %}
+            
           </table>
         </div>
       </div>
@@ -206,10 +204,10 @@
     <h2>{{ split_metric_name }}</h2>
     {% endwith %}
 
-    <button onclick="toggleTable('{{ metric }}{{ forloop.counter }}');">
+    <button onclick="toggleTable('multitable-{{ metric }}-{{ forloop.counter }}');">
       Show/hide
     </button>
-    <div id="{{ metric }}{{ forloop.counter }}" class="table-container">
+    <div id="multitable-{{ metric }}-{{ forloop.counter }}" class="table-container">
       <div class="flex-container">
         <table class="score-table">
           <tr>
@@ -219,21 +217,31 @@
             <td><strong>Jensen Shannon</strong></td>
             <td><strong>Mean Max Discrepancy</strong></td>
             <td><strong>Chi^2</strong></td>
-            {% else %}
-            <td><strong>Accuracy</strong></td>
-            <td><strong>Precision</strong></td>
-            <td><strong>Recall</strong></td>
-            <td><strong>Log loss</strong></td>
+            {% elif 'detection' in metric %}
+              {% for i in details.accuracy.fold_statistics.mean %}
+              <td><strong>{{ forloop.counter }}</strong></td>
+              {% endfor %}
+             {% else %}
+             {% for i in details.fold_statistics.mean %}
+             <td><strong>{{ forloop.counter }}</strong></td>
+           {% endfor %}
             {% endif %}
           </tr>
-          {% for score_list in details.scores %}
-          <tr>
-            <td>{{ forloop.counter }}</td>
-            {% for score in score_list %}
+          {% if 'detection' in metric %}
+            {% for metric_type_name, metric_type_items in details.items %}
+            <tr>
+              <td><strong>{{ metric_type_name }}</strong></td>
+              {% for score in metric_type_items.fold_statistics.mean %}
+              <td class="number">{{ score|floatformat:2 }}</td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          {% else %}
+            <td><strong>Values</strong></td>
+            {% for score in details.fold_statistics.mean %}
             <td class="number">{{ score|floatformat:2 }}</td>
             {% endfor %}
-          </tr>
-          {% endfor %}
+          {% endif %}
         </table>
 
         <table class="stats-table">
@@ -245,56 +253,44 @@
             <td><strong>Mean Max Discrepancy</strong></td>
             <td><strong>Chi^2</strong></td>
             {% else %}
-            <td><strong>Accuracy</strong></td>
-            <td><strong>Precision</strong></td>
-            <td><strong>Recall</strong></td>
-            <td><strong>Log loss</strong></td>
+            <td><strong>Mean</strong></td>
+            <td><strong>Std. Dev.</strong></td>
+            <td><strong>Std. Err.</strong></td>
+            <td><strong>Min</strong></td>
+            <td><strong>Max</strong></td>
+            <td><strong>Median</strong></td>
+            <td><strong>95% CI</strong></td>
             {% endif %}
           </tr>
-          <tr>
-            <td><strong>Mean</strong></td>
-            {% for score in details.aggregation_scores.mean %}
-            <td class="number">{{ score|floatformat:2 }}</td>
+          {% if 'detection' in metric %}
+            {% for metric_type_name, metric_type_items in details.items %}
+            <tr>
+              <td><strong>{{ metric_type_name }}</strong></td>
+              <td class="number">{{ metric_type_items.statistics.mean|floatformat:2 }}</td>
+              <td class="number">{{ metric_type_items.statistics.std|floatformat:2 }}</td>
+              <td class="number">{{ metric_type_items.statistics.se_mean|floatformat:2 }}</td>
+              <td class="number">{{ metric_type_items.statistics.min|floatformat:2 }}</td>
+              <td class="number">{{ metric_type_items.statistics.max|floatformat:2 }}</td>
+              <td class="number">{{ metric_type_items.statistics.median|floatformat:2 }}</td>
+              <td class="number">
+                {{ metric_type_items.statistics.95ci.0|floatformat:3 }} - {{ metric_type_items.statistics.95ci.1|floatformat:3 }}
+            </tr>
+
             {% endfor %}
-          </tr>
+          {% else %}
           <tr>
-            <td><strong>Standard Deviation</strong></td>
-            {% for score in details.aggregation_scores.std %}
-            <td class="number">{{ score|floatformat:2 }}</td>
-            {% endfor %}
-          </tr>
-          <tr>
-            <td><strong>Standard Error</strong></td>
-            {% for score in details.aggregation_scores.se %}
-            <td class="number">{{ score|floatformat:2 }}</td>
-            {% endfor %}
-          </tr>
-          <tr>
-            <td><strong>Min</strong></td>
-            {% for score in details.aggregation_scores.min %}
-            <td class="number">{{ score|floatformat:2 }}</td>
-            {% endfor %}
-          </tr>
-          <tr>
-            <td><strong>Max</strong></td>
-            {% for score in details.aggregation_scores.max %}
-            <td class="number">{{ score|floatformat:2 }}</td>
-            {% endfor %}
-          </tr>
-          <tr>
-            <td><strong>Median</strong></td>
-            {% for score in details.aggregation_scores.median %}
-            <td class="number">{{ score|floatformat:2 }}</td>
-            {% endfor %}
-          </tr>
-          <tr>
-            <td><strong>95% confidence interval</strong></td>
-            {% for score1, score2 in details.aggregation_scores.95ci %}
+            <td><strong>Values</strong></td>
+            <td class="number">{{ details.statistics.mean|floatformat:2 }}</td>
+            <td class="number">{{ details.statistics.std|floatformat:2 }}</td>
+            <td class="number">{{ details.statistics.se|floatformat:2 }}</td>
+            <td class="number">{{ details.statistics.min|floatformat:2 }}</td>
+            <td class="number">{{ details.statistics.max|floatformat:2 }}</td>
+            <td class="number">{{ details.statistics.median|floatformat:2 }}</td>
             <td class="number">
-              {{ score1|floatformat:3 }} - {{ score2|floatformat:3 }}
-            </td>
-            {% endfor %}
-          </tr>
+              {{ details.statistics.95ci.0|floatformat:3 }} - {{ details.statistics.95ci.1|floatformat:3 }}
+           
+          {% endif %}
+          
         </table>
       </div>
     </div>
@@ -316,12 +312,108 @@
   {% for column_name, details in column_details.items%}
   <h3>{{ column_name }}</h3>
   
-  <button onclick="toggleTable('{{ table_name }}{{ metric }}{{ column_name }}{{ forloop.counter }}');">
+  <button onclick="toggleTable('singlecolumn-{{ table_name }}-{{ metric }}-{{ column_name }}-{{ forloop.counter }}');">
       Show/hide
   </button>
-    <div id="{{ table_name }}{{ metric }}{{ column_name }}{{ forloop.counter }}" class="table-container">
+    <div id="singlecolumn-{{ table_name }}-{{ metric }}-{{ column_name }}-{{ forloop.counter }}" class="table-container">
       <div class="flex-container">
         <table class="score-table">
+          <tr>
+            <td><strong>Fold</strong></td>
+            {% if 'statistical' in metric %}
+            <td><strong>Kolmogorov-Smirnov</strong></td>
+            <td><strong>Jensen Shannon</strong></td>
+            <td><strong>Mean Max Discrepancy</strong></td>
+            <td><strong>Chi^2</strong></td>
+            {% elif 'detection' in metric %}
+              {% for i in details.accuracy.fold_statistics.mean %}
+              <td><strong>{{ forloop.counter }}</strong></td>
+              {% endfor %}
+             {% else %}
+             {% for i in details.fold_statistics.mean %}
+             <td><strong>{{ forloop.counter }}</strong></td>
+           {% endfor %}
+            {% endif %}
+          </tr>
+          {% if 'detection' in metric %}
+            {% for metric_type_name, metric_type_items in details.items %}
+            <tr>
+              <td><strong>{{ metric_type_name }}</strong></td>
+              {% for score in metric_type_items.fold_statistics.mean %}
+              <td class="number">{{ score|floatformat:2 }}</td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          {% else %}
+          {% with combined_statistics=details.combined_statistics %}
+          <tr>
+            <td><strong>Values</strong></td>
+            {% for score, 95ci_list in combined_statistics %}
+              <td class="number" {% if score|is_in_range:95ci_list %} style="color: green;"{% else %}style="color: red;"{% endif %}>
+                {{ score|floatformat:4 }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td><strong>95% CI</strong></td>
+            {% for ci_list in details.reference_fold_statistics.95ci %}
+            <td>
+              {{ ci_list.0|floatformat:3 }} - {{ ci_list.1|floatformat:3 }}
+            </td>
+            {% endfor %}
+          </tr>
+          {% endwith %}
+          {% endif %}
+        </table>
+
+        <table class="stats-table">
+          <tr>
+            <td><strong>Statistic</strong></td>
+            {% if 'statistical' in metric %}
+            <td><strong>Kolmogorov-Smirnov</strong></td>
+            <td><strong>Jensen Shannon</strong></td>
+            <td><strong>Mean Max Discrepancy</strong></td>
+            <td><strong>Chi^2</strong></td>
+            {% else %}
+            <td><strong>Mean</strong></td>
+            <td><strong>Std. Dev.</strong></td>
+            <td><strong>Std. Err.</strong></td>
+            <td><strong>Min</strong></td>
+            <td><strong>Max</strong></td>
+            <td><strong>Median</strong></td>
+            <td><strong>95% CI</strong></td>
+            {% endif %}
+          </tr>
+          {% if 'detection' in metric %}
+            {% for metric_type_name, metric_type_items in details.items %}
+            <tr>
+              <td><strong>{{ metric_type_name }}</strong></td>
+              <td class="number">{{ metric_type_items.statistics.mean|floatformat:2 }}</td>
+              <td class="number">{{ metric_type_items.statistics.std|floatformat:2 }}</td>
+              <td class="number">{{ metric_type_items.statistics.se_mean|floatformat:2 }}</td>
+              <td class="number">{{ metric_type_items.statistics.min|floatformat:2 }}</td>
+              <td class="number">{{ metric_type_items.statistics.max|floatformat:2 }}</td>
+              <td class="number">{{ metric_type_items.statistics.median|floatformat:2 }}</td>
+              <td class="number">
+                {{ metric_type_items.statistics.95ci.0|floatformat:3 }} - {{ metric_type_items.statistics.95ci.1|floatformat:3 }}
+            </tr>
+
+            {% endfor %}
+          {% else %}
+          <tr>
+            <td><strong>Values</strong></td>
+            <td class="number">{{ details.statistics.mean|floatformat:2 }}</td>
+            <td class="number">{{ details.statistics.std|floatformat:2 }}</td>
+            <td class="number">{{ details.statistics.se|floatformat:2 }}</td>
+            <td class="number">{{ details.statistics.min|floatformat:2 }}</td>
+            <td class="number">{{ details.statistics.max|floatformat:2 }}</td>
+            <td class="number">{{ details.statistics.median|floatformat:2 }}</td>
+            <td class="number">
+              {{ details.statistics.95ci.0|floatformat:3 }} - {{ details.statistics.95ci.1|floatformat:3 }}
+           
+          {% endif %}
+          
+        </table>
+        <!-- <table class="score-table">
           <tr>
             <td><strong>Fold</strong></td>
             <td><strong>Metric value</strong></td>
@@ -398,7 +490,7 @@
             </td>
             {% endfor %}
           </tr>
-        </table>
+        </table> -->
       </div>
     </div>
     {% endfor %}

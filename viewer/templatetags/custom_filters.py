@@ -13,6 +13,6 @@ def is_in_range(value, arg):
         return False
     try:
         lower_bound, upper_bound = float(arg[0]), float(arg[1])
-        return value <= upper_bound
+        return float(value) <= upper_bound
     except (ValueError, TypeError):
         return False
